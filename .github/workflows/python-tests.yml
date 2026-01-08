@@ -84,7 +84,7 @@ jobs:
   deploy:
     name: Deploy to Kubernetes
     needs: docker-build-push
-    runs-on: self-hosted   # 👈 your Kubernetes runner
+    runs-on: self-hosted
 
     steps:
     - name: Checkout code
@@ -98,4 +98,9 @@ jobs:
     - name: Deploy application
       run: |
         kubectl apply -f k8s/deployment.yaml
+        kubectl apply -f k8s/app/
         kubectl rollout status deployment/business-dashboard
+    
+    - name: Deploy monitoring stack
+      run: |
+        kubectl apply -f k8s/monitoring/
