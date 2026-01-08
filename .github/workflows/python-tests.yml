@@ -3,9 +3,9 @@ name: Python Tests and Code Quality
 # When to run this workflow
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main, master,githubAction ]
   pull_request:
-    branches: [ main, master ]
+    branches: [ main, master,githubAction ]
 
 jobs:
   test:
