@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: business-dashboard
+  labels:
+    app: business-dashboard
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: business-dashboard
+  template:
+    metadata:
+      labels:
+        app: business-dashboard
+    spec:
+      containers:
+      - name: business-dashboard
+        image: <DOCKERHUB_USERNAME>/business-dashboard:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
+        env:
+        - name: FLASK_ENV
+          value: "production"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: business-dashboard-service
+spec:
+  type: NodePort
+  selector:
+    app: business-dashboard
+  ports:
+  - port: 5000
+    targetPort: 5000
+    nodePort: 30007
