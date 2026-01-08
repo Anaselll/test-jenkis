@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Business Management Dashboard</title>
+    <title>Sales - Business Management Dashboard</title>
     <style>
         * {
             margin: 0;
@@ -115,7 +115,7 @@
 </head>
 <body>
 
-<h1>Business Management Dashboard</h1>
+<h1>Sales</h1>
 
 <div class="navbar">
     <a href="{{ url_for('dashboard_ui') }}">Dashboard</a>
@@ -124,10 +124,6 @@
 </div>
 
 <div class="cards">
-    <div class="card">
-        <h3>Total Employees</h3>
-        <p>{{ summary.total_employees }}</p>
-    </div>
     <div class="card">
         <h3>Total Sales</h3>
         <p>{{ summary.total_sales }}</p>
@@ -142,41 +138,15 @@
     </div>
 </div>
 
-<h2>Add Employee</h2>
-<form method="post" action="/api/employees" onsubmit="return submitForm(event, this)">
-    <input name="name" placeholder="Name" required>
-    <input name="position" placeholder="Position" required>
-    <input name="salary" placeholder="Salary" type="number" required>
-    <button>Add</button>
-</form>
-
-<h2>Employees</h2>
-<table>
-    <tr>
-        <th>Name</th>
-        <th>Position</th>
-        <th>Salary</th>
-        <th>Hired</th>
-    </tr>
-    {% for e in employees %}
-    <tr>
-        <td>{{ e.name }}</td>
-        <td>{{ e.position }}</td>
-        <td>${{ e.salary }}</td>
-        <td>{{ e.hired_date }}</td>
-    </tr>
-    {% endfor %}
-</table>
-
 <h2>Add Sale</h2>
-<form method="post" action="/api/sales" onsubmit="return submitForm(event, this)">
+<form method="post" action="{{ url_for('add_sale') }}" onsubmit="return submitForm(event, this)">
     <input name="product" placeholder="Product" required>
     <input name="amount" placeholder="Amount" type="number" step="0.01" required>
     <input name="customer" placeholder="Customer" required>
     <button>Add</button>
 </form>
 
-<h2>Sales</h2>
+<h2>Sales List</h2>
 <table>
     <tr>
         <th>Product</th>
@@ -212,3 +182,5 @@ function submitForm(event, form) {
 
 </body>
 </html>
+
+

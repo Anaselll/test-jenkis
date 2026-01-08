@@ -146,8 +146,9 @@ dashboard = BusinessDashboard()
 
 # Flask routes
 
-@app.route('/')
+@app.route("/")
 def dashboard_ui():
+    """Main combined dashboard view with summary, employees and sales."""
     summary = dashboard.get_dashboard_summary()
     employees = dashboard.get_employees()
     sales = dashboard.get_sales()
@@ -155,7 +156,31 @@ def dashboard_ui():
         "dashboard.html",
         summary=summary,
         employees=employees,
-        sales=sales
+        sales=sales,
+    )
+
+
+@app.route("/employees")
+def employees_page():
+    """Employees management page."""
+    employees = dashboard.get_employees()
+    summary = dashboard.get_dashboard_summary()
+    return render_template(
+        "employees.html",
+        summary=summary,
+        employees=employees,
+    )
+
+
+@app.route("/sales")
+def sales_page():
+    """Sales management page."""
+    sales = dashboard.get_sales()
+    summary = dashboard.get_dashboard_summary()
+    return render_template(
+        "sales.html",
+        summary=summary,
+        sales=sales,
     )
 
 
