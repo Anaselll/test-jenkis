@@ -73,7 +73,7 @@
         }
         th, td {
             padding: 12px;
-            text-align: left;
+            text-align: center;
             border-bottom: 1px solid #e0e0e0;
         }
         th {
@@ -89,6 +89,9 @@
             padding: 15px;
             background: #f8f8f8;
             border: 1px solid #e0e0e0;
+        }
+        .search {
+            margin: 10px 0 15px 0;
         }
         input {
             padding: 8px 12px;
@@ -147,7 +150,10 @@
 </form>
 
 <h2>Sales List</h2>
-<table>
+<div class="search">
+    <input id="sales-search" placeholder="Search sales...">
+</div>
+<table id="sales-table">
     <tr>
         <th>Product</th>
         <th>Amount</th>
@@ -178,6 +184,23 @@ function submitForm(event, form) {
 
     return false;
 }
+
+function setupSearch(inputId, tableId) {
+    const input = document.getElementById(inputId);
+    const table = document.getElementById(tableId);
+    if (!input || !table) return;
+
+    input.addEventListener("input", () => {
+        const term = input.value.toLowerCase();
+        const rows = Array.from(table.querySelectorAll("tr"));
+        rows.forEach((row, idx) => {
+            if (idx === 0) return; // skip header
+            row.style.display = row.textContent.toLowerCase().includes(term) ? "" : "none";
+        });
+    });
+}
+
+setupSearch("sales-search", "sales-table");
 </script>
 
 </body>
