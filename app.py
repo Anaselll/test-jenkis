@@ -1,3 +1,4 @@
+import os
 import sqlite3
 from datetime import datetime
 from typing import Dict, List
@@ -6,7 +7,8 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
-
+db_path = os.getenv("DB_PATH", "business_dashboard.db")
+dashboard = BusinessDashboard(db_name=db_path)
 
 class BusinessDashboard:
     """Main business dashboard class for managing employees and sales with SQLite"""
