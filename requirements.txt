@@ -1,3 +1,10 @@
 pytest
 flask
 flask-cors
+
+flake8
+pylint
+black
+mypy
+coverage 
+radon
