@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: business-dashboard
-        image: <DOCKERHUB_USERNAME>/business-dashboard:latest
+        image: anasell/business-dashboard:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
