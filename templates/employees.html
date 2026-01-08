@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Business Management Dashboard</title>
+    <title>Employees - Business Management Dashboard</title>
     <style>
         * {
             margin: 0;
@@ -128,7 +128,7 @@
 </head>
 <body>
 
-<h1>Business Management Dashboard</h1>
+<h1>Employees</h1>
 
 <div class="navbar">
     <a href="{{ url_for('dashboard_ui') }}">Dashboard</a>
@@ -149,25 +149,21 @@
         <h3>Total Revenue</h3>
         <p>${{ "%.2f"|format(summary.total_revenue) }}</p>
     </div>
-    <div class="card">
-        <h3>Average Sale</h3>
-        <p>${{ "%.2f"|format(summary.average_sale) }}</p>
-    </div>
 </div>
 
 <h2>Add Employee</h2>
-<form method="post" action="/api/employees" onsubmit="return submitForm(event, this)">
+<form method="post" action="{{ url_for('add_employee') }}" onsubmit="return submitForm(event, this)">
     <input name="name" placeholder="Name" required>
     <input name="position" placeholder="Position" required>
     <input name="salary" placeholder="Salary" type="number" required>
     <button>Add</button>
 </form>
 
-<h2>Employees</h2>
+<h2>Employees List</h2>
 <div class="search">
-    <input class="search-input" id="dashboard-employees-search" placeholder="Search employees...">
+    <input class="search-input" id="employees-search" placeholder="Search employees...">
 </div>
-<table id="dashboard-employees-table">
+<table id="employees-table">
     <tr>
         <th>Name</th>
         <th>Position</th>
@@ -180,35 +176,6 @@
         <td>{{ e.position }}</td>
         <td>${{ e.salary }}</td>
         <td>{{ e.hired_date }}</td>
-    </tr>
-    {% endfor %}
-</table>
-
-<h2>Add Sale</h2>
-<form method="post" action="/api/sales" onsubmit="return submitForm(event, this)">
-    <input name="product" placeholder="Product" required>
-    <input name="amount" placeholder="Amount" type="number" step="0.01" required>
-    <input name="customer" placeholder="Customer" required>
-    <button>Add</button>
-</form>
-
-<h2>Sales</h2>
-<div class="search">
-    <input class="search-input" id="dashboard-sales-search" placeholder="Search sales...">
-</div>
-<table id="dashboard-sales-table">
-    <tr>
-        <th>Product</th>
-        <th>Amount</th>
-        <th>Customer</th>
-        <th>Date</th>
-    </tr>
-    {% for s in sales %}
-    <tr>
-        <td>{{ s.product }}</td>
-        <td>${{ s.amount }}</td>
-        <td>{{ s.customer }}</td>
-        <td>{{ s.sale_date }}</td>
     </tr>
     {% endfor %}
 </table>
@@ -243,9 +210,10 @@ function setupSearch(inputId, tableId) {
     });
 }
 
-setupSearch("dashboard-employees-search", "dashboard-employees-table");
-setupSearch("dashboard-sales-search", "dashboard-sales-table");
+setupSearch("employees-search", "employees-table");
 </script>
 
 </body>
 </html>
+
+
