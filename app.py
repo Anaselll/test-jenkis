@@ -4,6 +4,9 @@ from typing import Dict, List
 from flask import Flask, jsonify, request, render_template
 from flask_cors import CORS
 
+# --- PROMETHEUS IMPORTS (added) ---
+from prometheus_client import Counter, Gauge, generate_latest, CONTENT_TYPE_LATEST
+
 app = Flask(__name__)
 CORS(app)
 
@@ -144,44 +147,48 @@ class BusinessDashboard:
 dashboard = BusinessDashboard()
 
 
-# Flask routes
+# --- PROMETHEUS METRICS DEFINITIONS (added) ---
+# Count HTTP requests by method & endpoint
+REQUEST_COUNT = Counter('flask_requests_total', 'Total HTTP requests', ['method', 'endpoint'])
+# Gauge for number of employees
+EMPLOYEE_COUNT = Gauge('employees_total', 'Total number of employees')
+# Gauge for total sales
+TOTAL_SALES = Gauge('total_sales_amount', 'Total revenue of sales')
 
+
+# --- PROMETHEUS REQUEST HOOK (added) ---
+@app.before_request
+def before_request():
+    REQUEST_COUNT.labels(method=request.method, endpoint=request.path).inc()
+
+
+# --- PROMETHEUS GAUGE UPDATES (added) ---
+def update_gauges():
+    EMPLOYEE_COUNT.set(dashboard.get_employee_count())
+    TOTAL_SALES.set(dashboard.get_total_revenue())
+
+
+# Flask routes
 @app.route("/")
 def dashboard_ui():
-    """Main combined dashboard view with summary, employees and sales."""
     summary = dashboard.get_dashboard_summary()
     employees = dashboard.get_employees()
     sales = dashboard.get_sales()
-    return render_template(
-        "dashboard.html",
-        summary=summary,
-        employees=employees,
-        sales=sales,
-    )
+    return render_template("dashboard.html", summary=summary, employees=employees, sales=sales)
 
 
 @app.route("/employees")
 def employees_page():
-    """Employees management page."""
     employees = dashboard.get_employees()
     summary = dashboard.get_dashboard_summary()
-    return render_template(
-        "employees.html",
-        summary=summary,
-        employees=employees,
-    )
+    return render_template("employees.html", summary=summary, employees=employees)
 
 
 @app.route("/sales")
 def sales_page():
-    """Sales management page."""
     sales = dashboard.get_sales()
     summary = dashboard.get_dashboard_summary()
-    return render_template(
-        "sales.html",
-        summary=summary,
-        sales=sales,
-    )
+    return render_template("sales.html", summary=summary, sales=sales)
 
 
 @app.route('/health')
@@ -244,6 +251,13 @@ def add_sale():
         if success else
         (jsonify({"error": "Failed to add sale"}), 400)
     )
+
+
+# --- PROMETHEUS METRICS ENDPOINT (added) ---
+@app.route('/metrics')
+def metrics():
+    update_gauges()  # refresh gauges before scraping
+    return generate_latest(), 200, {'Content-Type': CONTENT_TYPE_LATEST}
 
 
 if __name__ == '__main__':
