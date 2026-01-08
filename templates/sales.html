@@ -93,6 +93,16 @@
         .search {
             margin: 10px 0 15px 0;
         }
+        .search-input {
+            width: 100%;
+            max-width: 320px;
+            height: 38px;
+            padding: 10px 12px 10px 36px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23999' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85Zm-5.242.656a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z'/%3E%3C/svg%3E") no-repeat 12px 50%;
+            background-size: 16px;
+        }
         input {
             padding: 8px 12px;
             margin-right: 10px;
@@ -151,7 +161,7 @@
 
 <h2>Sales List</h2>
 <div class="search">
-    <input id="sales-search" placeholder="Search sales...">
+    <input class="search-input" id="sales-search" placeholder="Search sales...">
 </div>
 <table id="sales-table">
     <tr>
