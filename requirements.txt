@@ -8,3 +8,4 @@ black
 mypy
 coverage 
 radon
+prometheus_client
