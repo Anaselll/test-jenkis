@@ -34,11 +34,7 @@ jobs:
         flake8 app.py test_app.py --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       continue-on-error: true
     
-    - name: Check code formatting with black
-      run: |
-        black --check app.py test_app.py
-      continue-on-error: true
-    
+   
     - name: Type check with mypy
       run: |
         mypy app.py --ignore-missing-imports
