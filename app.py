@@ -1,3 +1,4 @@
+import logging
 import sqlite3
 from datetime import datetime
 from typing import Dict, List
@@ -11,12 +12,23 @@ app = Flask(__name__)
 CORS(app)
 
 
+logging.basicConfig(
+    level=logging.INFO,                 # Niveau minimum de logs
+    format="%(asctime)s [%(levelname)s] %(message)s",  # Format des logs
+    handlers=[
+        logging.FileHandler("app.log"),  # Sauvegarde dans un fichier app.log
+        logging.StreamHandler()          # Affichage dans la console (docker logs)
+    ]
+)
+logger = logging.getLogger(__name__)  # Création du logger global
+
 class BusinessDashboard:
     """Main business dashboard class for managing employees and sales with SQLite"""
 
     def __init__(self, db_name: str = "business_dashboard.db"):
         self.db_name = db_name
         self._init_database()
+        logger.info("Base de données initialisée")  # Après init de la base dans __init__
 
     def get_connection(self):
         conn = sqlite3.connect(self.db_name)
@@ -51,10 +63,12 @@ class BusinessDashboard:
 
         conn.commit()
         conn.close()
+        logger.info("Tables employees et sales vérifiées / créées")  # Après _init_database
 
     # Employee methods
     def add_employee(self, name: str, position: str, salary: float) -> bool:
         if not name or not position or salary < 0:
+            logger.warning(f"Tentative d'ajout d'employé invalide: {name}, {position}, {salary}")  # entrée invalide dans add_employee
             return False
         try:
             conn = self.get_connection()
@@ -65,8 +79,10 @@ class BusinessDashboard:
             ''', (name, position, salary, datetime.now()))
             conn.commit()
             conn.close()
+            logger.info(f"Employé ajouté: {name}, {position}, {salary}")  # succès ajout employé
             return True
-        except sqlite3.Error:
+        except sqlite3.Error as e:
+            logger.error(f"Erreur lors de l'ajout d'un employé: {e}")  # exception SQLite add_employee
             return False
 
     def get_employees(self) -> List[Dict]:
@@ -75,6 +91,7 @@ class BusinessDashboard:
         cursor.execute('SELECT * FROM employees ORDER BY id DESC')
         result = [dict(row) for row in cursor.fetchall()]
         conn.close()
+        logger.debug(f"Récupération des employés: {len(result)} trouvés")  # get_employees après fetch
         return result
 
     def get_employee_count(self) -> int:
@@ -88,6 +105,7 @@ class BusinessDashboard:
     # Sales methods
     def add_sale(self, product: str, amount: float, customer: str) -> bool:
         if not product or not customer or amount <= 0:
+            logger.warning(f"Tentative d'ajout de vente invalide: {product}, {customer}, {amount}")  # entrée invalide dans add_sale
             return False
         try:
             conn = self.get_connection()
@@ -98,8 +116,10 @@ class BusinessDashboard:
             ''', (product, amount, customer, datetime.now()))
             conn.commit()
             conn.close()
+            logger.info(f"Vente ajoutée: {product}, {amount}, {customer}")  # succès ajout vente
             return True
-        except sqlite3.Error:
+        except sqlite3.Error as e:
+            logger.error(f"Erreur lors de l'ajout d'une vente: {e}")  # exception SQLite add_sale
             return False
 
     def get_sales(self) -> List[Dict]:
@@ -108,6 +128,7 @@ class BusinessDashboard:
         cursor.execute('SELECT * FROM sales ORDER BY id DESC LIMIT 100')
         result = [dict(row) for row in cursor.fetchall()]
         conn.close()
+        logger.debug(f"Récupération des ventes: {len(result)} trouvées")  # get_sales après fetch
         return result
 
     def get_total_revenue(self) -> float:
@@ -174,36 +195,55 @@ def dashboard_ui():
     summary = dashboard.get_dashboard_summary()
     employees = dashboard.get_employees()
     sales = dashboard.get_sales()
-    return render_template("dashboard.html", summary=summary, employees=employees, sales=sales)
+    logger.info("Page dashboard affichée")  # Route "/"
+    return render_template(
+        "dashboard.html",
+        summary=summary,
+        employees=employees,
+        sales=sales,
+    )
 
 
 @app.route("/employees")
 def employees_page():
     employees = dashboard.get_employees()
     summary = dashboard.get_dashboard_summary()
-    return render_template("employees.html", summary=summary, employees=employees)
+    logger.info("Page employees affichée")  # Route "/employees"
+    return render_template(
+        "employees.html",
+        summary=summary,
+        employees=employees,
+    )
 
 
 @app.route("/sales")
 def sales_page():
     sales = dashboard.get_sales()
     summary = dashboard.get_dashboard_summary()
-    return render_template("sales.html", summary=summary, sales=sales)
+    logger.info("Page sales affichée")  # Route "/sales"
+    return render_template(
+        "sales.html",
+        summary=summary,
+        sales=sales,
+    )
 
 
 @app.route('/health')
 def health():
+    logger.info("Endpoint /health appelé")  # Route "/health"
     return jsonify({"status": "healthy", "timestamp": datetime.now().isoformat()})
 
 
 @app.route('/api/dashboard')
 def get_dashboard():
+    logger.info("API /api/dashboard appelée")  # Route "/api/dashboard"
     return jsonify(dashboard.get_dashboard_summary())
 
 
 @app.route('/api/employees', methods=['GET'])
 def get_employees():
     employees = dashboard.get_employees()
+    logger.info(f"API GET /api/employees appelée, {len(employees)} employés renvoyés")  # GET /api/employees
     return jsonify({"employees": employees, "count": len(employees)})
 
 
@@ -215,21 +255,25 @@ def add_employee():
         position = data.get('position')
         salary = float(data.get('salary'))
     except (TypeError, ValueError):
+        logger.warning(f"Entrée invalide pour add_employee: {data}")  # POST /api/employees entrée invalide
         return jsonify({"error": "Invalid input"}), 400
     if not name or not position or salary < 0:
+        logger.warning(f"Entrée invalide pour add_employee: {data}")  # POST /api/employees entrée invalide
         return jsonify({"error": "Invalid employee data"}), 400
 
     success = dashboard.add_employee(name, position, salary)
-    return (
-        jsonify({"message": "Employee added successfully"}), 201
-        if success else
-        (jsonify({"error": "Failed to add employee"}), 400)
-    )
+    if success:
+        logger.info(f"Employé ajouté via API: {name}")  # POST /api/employees succès
+        return jsonify({"message": "Employee added successfully"}), 201
+    else:
+        logger.error(f"Échec de l'ajout d'employé via API: {data}")  # POST /api/employees échec
+        return jsonify({"error": "Failed to add employee"}), 400
 
 
 @app.route('/api/sales', methods=['GET'])
 def get_sales():
     sales = dashboard.get_sales()
+    logger.info(f"API GET /api/sales appelée, {len(sales)} ventes renvoyées")  # GET /api/sales
     return jsonify({"sales": sales, "count": len(sales)})
 
 
@@ -241,16 +285,19 @@ def add_sale():
         customer = data.get('customer')
         amount = float(data.get('amount'))
     except (TypeError, ValueError):
+        logger.warning(f"Entrée invalide pour add_sale: {data}")  # POST /api/sales entrée invalide
         return jsonify({"error": "Invalid input"}), 400
     if not product or not customer or amount <= 0:
+        logger.warning(f"Entrée invalide pour add_sale: {data}")  # POST /api/sales entrée invalide
         return jsonify({"error": "Invalid sale data"}), 400
 
     success = dashboard.add_sale(product, amount, customer)
-    return (
-        jsonify({"message": "Sale added successfully"}), 201
-        if success else
-        (jsonify({"error": "Failed to add sale"}), 400)
-    )
+    if success:
+        logger.info(f"Vente ajoutée via API: {product}, {amount}")  # POST /api/sales succès
+        return jsonify({"message": "Sale added successfully"}), 201
+    else:
+        logger.error(f"Échec de l'ajout de vente via API: {data}")  # POST /api/sales échec
+        return jsonify({"error": "Failed to add sale"}), 400
 
 
 # --- PROMETHEUS METRICS ENDPOINT (added) ---
@@ -267,5 +314,6 @@ if __name__ == '__main__':
         dashboard.add_employee("Jane Smith", "Developer", 85000)
         dashboard.add_sale("Product A", 1200.50, "Acme Corp")
         dashboard.add_sale("Product B", 850.00, "Tech Industries")
-
+    logger.info("Application démarrée et prête à recevoir des requêtes")  # Après le seed des données et avant app.run()
     app.run(debug=True, host='0.0.0.0', port=5000)
+

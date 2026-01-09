@@ -1,0 +1,32 @@
+2026-01-08 21:37:40,120 [INFO] Tables employees et sales vérifiées / créées
+2026-01-08 21:37:40,120 [INFO] Base de données initialisée
+2026-01-08 21:37:47,234 [INFO] Tables employees et sales vérifiées / créées
+2026-01-08 21:37:47,234 [INFO] Base de données initialisée
+2026-01-08 21:45:15,940 [WARNING] Attention, ressource manquante
+2026-01-08 21:45:15,941 [ERROR] Erreur critique
+2026-01-08 21:47:20,407 [INFO] Tables employees et sales vérifiées / créées
+2026-01-08 21:47:20,407 [INFO] Base de données initialisée
+2026-01-08 21:47:50,878 [INFO] Tables employees et sales vérifiées / créées
+2026-01-08 21:47:50,879 [INFO] Base de données initialisée
+2026-01-08 21:47:50,883 [INFO] Application démarrée et prête à recevoir des requêtes
+2026-01-08 21:47:50,983 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://100.90.177.248:5000
+2026-01-08 21:47:50,983 [INFO] [33mPress CTRL+C to quit[0m
+2026-01-08 21:47:51,006 [INFO]  * Restarting with watchdog (fsevents)
+2026-01-08 21:47:51,341 [INFO] Tables employees et sales vérifiées / créées
+2026-01-08 21:47:51,342 [INFO] Base de données initialisée
+2026-01-08 21:47:51,347 [INFO] Application démarrée et prête à recevoir des requêtes
+2026-01-08 21:47:51,397 [WARNING]  * Debugger is active!
+2026-01-08 21:47:51,414 [INFO]  * Debugger PIN: 128-702-773
+2026-01-08 21:47:55,944 [INFO] Page dashboard affichée
+2026-01-08 21:47:55,967 [INFO] 127.0.0.1 - - [08/Jan/2026 21:47:55] "GET / HTTP/1.1" 200 -
+2026-01-08 21:48:11,754 [INFO]  * Detected change in '/Users/mac/Desktop/ESTC/devOps/test-jenkis/app.py', reloading
+2026-01-08 21:48:11,768 [INFO]  * Detected change in '/Users/mac/Desktop/ESTC/devOps/test-jenkis/app.py', reloading
+2026-01-08 21:48:12,780 [INFO]  * Restarting with watchdog (fsevents)
+2026-01-08 21:48:13,347 [INFO] Tables employees et sales vérifiées / créées
+2026-01-08 21:48:13,347 [INFO] Base de données initialisée
+2026-01-08 21:48:13,352 [INFO] Application démarrée et prête à recevoir des requêtes
+2026-01-08 21:48:13,413 [WARNING]  * Debugger is active!
+2026-01-08 21:48:13,436 [INFO]  * Debugger PIN: 128-702-773
